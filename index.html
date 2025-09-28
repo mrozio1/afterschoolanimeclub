@@ -1,0 +1,263 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="After School Anime Club - Custom and limited run anime clothing, toys, and art prints.">
+    <title>After School Anime Club</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 1rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ff6b6b;
+        }
+
+        .hero {
+            background-image: url('https://via.placeholder.com/1200x400?text=Anime+Hero+Image');
+            background-size: cover;
+            background-position: center;
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+        }
+
+        .products {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card h3 {
+            padding: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .product-card p {
+            padding: 0 1rem 1rem;
+            color: #666;
+        }
+
+        .product-card a {
+            display: block;
+            text-align: center;
+            background: #ff6b6b;
+            color: white;
+            padding: 0.75rem;
+            text-decoration: none;
+            margin: 0 1rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .product-card a:hover {
+            background: #e55a5a;
+        }
+
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>After School Anime Club</h1>
+        <p>Custom & Limited Run Anime Clothing, Toys, and Art Prints</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#clothing">Clothing</a></li>
+            <li><a href="#toys">Toys</a></li>
+            <li><a href="#art">Art Prints</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero">
+        <h2>Welcome to Your Anime Obsession Hub!</h2>
+    </section>
+
+    <section class="products" id="clothing">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Anime+T-Shirt" alt="Anime T-Shirt">
+            <h3>Custom Anime T-Shirt</h3>
+            <p>Limited edition hand-printed anime tees featuring your favorite characters.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Anime+Hoodie" alt="Anime Hoodie">
+            <h3>Anime Hoodie</h3>
+            <p>Cozy, custom-designed hoodies with vibrant anime artwork.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+    </section>
+
+    <section class="products" id="toys">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Anime+Figure" alt="Anime Figure">
+            <h3>Exclusive Anime Figure</h3>
+            <p>Handcrafted, limited-run collectible figures from top anime series.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Plush+Toy" alt="Plush Toy">
+            <h3>Anime Plush Toy</h3>
+            <p>Adorable plushies inspired by iconic anime characters.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+    </section>
+
+    <section class="products" id="art">
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Anime+Art+Print" alt="Anime Art Print">
+            <h3>Anime Art Print</h3>
+            <p>High-quality, limited edition prints of stunning anime artwork.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+        <div class="product-card">
+            <img src="https://via.placeholder.com/300x200?text=Poster" alt="Anime Poster">
+            <h3>Anime Poster</h3>
+            <p>Vibrant posters to decorate your space with anime flair.</p>
+            <a href="#buy">Shop Now</a>
+        </div>
+    </section>
+
+    <footer id="contact">
+        <p>&copy; 2025 After School Anime Club. All rights reserved.</p>
+        <p>Contact us: <a href="mailto:info@afterschoolanimeclub.com" style="color: #ff6b6b;">info@afterschoolanimeclub.com</a></p>
+    </footer>
+</body>
+</html>
