@@ -1,421 +1,447 @@
 <!DOCTYPE html>
-<html lang="en"><head>
-<body oncontextmenu="return false;">
+
+<html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>After School Anime Club | Immersive Terminal</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&amp;family=VT323&amp;family=Orbitron:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<script>
+<title>After School Anime Club | Manga Edition</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
                     colors: {
-                        primary: "#D946EF", // Neon Pink/Fuchsia
-                        secondary: "#8B5CF6", // Neon Purple
-                        accent: "#2DD4BF", // Mint Green
-                        "background-light": "#f0f0f0", // Fallback
-                        "background-dark": "#050505", // Deep Void Black
-                        "terminal-gray": "#1a1a1a",
-                        "hologram": "rgba(45, 212, 191, 0.15)",
+                        "primary": "#7f0df2",
+                        "accent-pink": "#ff00ea",
+                        "accent-cyan": "#00f2ff",
+                        "background-dark": "#0a0612",
+                        "manga-white": "#f2f2f2",
                     },
                     fontFamily: {
-                        display: ["'Orbitron'", "sans-serif"],
-                        mono: ["'Share Tech Mono'", "monospace"],
-                        retro: ["'VT323'", "monospace"],
+                        "display": ["Space Grotesk", "sans-serif"]
                     },
-                    backgroundImage: {
-                        'grid-pattern': "linear-gradient(to right, #1f2937 1px, transparent 1px), linear-gradient(to bottom, #1f2937 1px, transparent 1px)",
-                        'scanline': "linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2))",
-                    },
-                    animation: {
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glitch': 'glitch 1s linear infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                        'scan': 'scan 8s linear infinite',
-                    },
-                    keyframes: {
-                        glitch: {
-                            '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
-                            '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
-                            '62%': { transform: 'translate(0,0) skew(5deg)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        scan: {
-                            '0%': { backgroundPosition: '0 -100vh' },
-                            '100%': { backgroundPosition: '0 100vh' },
-                        }
-                    }
                 },
             },
-        };
+        }
     </script>
-<style>.crt::before {
-            content: " ";
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap');
+
+        .font-manga {
+            font-family: 'Permanent Marker', cursive;
+        }
+
+        .screentone {
+            background-image: radial-gradient(rgba(127, 13, 242, 0.2) 1px, transparent 0);
+            background-size: 4px 4px;
+        }
+
+        .manga-panel {
+            border: 4px solid black;
+            box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+            position: relative;
+            background: #191022;
+            overflow: visible;
+            transition: transform 0.3s ease, opacity 0.6s ease-out, filter 0.6s ease-out;
+        }
+
+        .manga-panel:hover {
+            transform: scale(1.02) rotate(-1deg);
+            z-index: 40;
+        }
+
+        .diagonal-panel-right {
+            clip-path: polygon(0 0, 100% 10%, 100% 100%, 0 90%);
+        }
+
+        .diagonal-panel-left {
+            clip-path: polygon(0 10%, 100% 0, 100% 90%, 0 100%);
+        }
+
+        .speed-lines-bg {
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(127, 13, 242, 0.05) 10px,
+                rgba(127, 13, 242, 0.05) 11px
+            );
+        }
+
+        .speech-bubble {
+            position: relative;
+            background: white;
+            border: 3px solid black;
+            border-radius: 50%;
+            padding: 1.5rem;
+            color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 4px 4px 0px black;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 20%;
+            border-width: 20px 20px 0;
+            border-style: solid;
+            border-color: black transparent;
             display: block;
+            width: 0;
+        }
+
+        .gutter-space {
+            background-color: black;
+            height: 12px;
+            width: 100%;
+            margin: 2rem 0;
+        }
+
+        .action-text {
+            text-shadow: 4px 4px 0px #7f0df2, -2px -2px 0px #ff00ea;
+            letter-spacing: -0.05em;
+        }
+
+        /* --- ADVANCED CRT EFFECTS --- */
+        .crt-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99999;
+            overflow: hidden;
+        }
+
+        /* Slowly tracking scanlines */
+        .crt-scanlines {
             position: absolute;
             top: 0;
             left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 50;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }.glitch-text {
-            position: relative;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.2) 50%
+            );
+            background-size: 100% 6px;
+            animation: scanline-track 30s linear infinite;
+            opacity: 0.8;
         }
-        .glitch-text::before,
-        .glitch-text::after {
-            content: attr(data-text);
+
+        @keyframes scanline-track {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        .crt-noise {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            animation: noise-jitter 0.2s steps(2) infinite;
         }
-        .glitch-text::before {
-            left: 2px;
-            text-shadow: -1px 0 #D946EF;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim 5s infinite linear alternate-reverse;
+
+        /* Randomized Glitch Overlays */
+        .glitch-flash {
+            position: absolute;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            z-index: 100000;
         }
-        .glitch-text::after {
-            left: -2px;
-            text-shadow: -1px 0 #2DD4BF;
-            clip: rect(44px, 450px, 56px, 0);
-            animation: glitch-anim2 5s infinite linear alternate-reverse;
+
+        .glitch-horizontal {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 242, 255, 0.5);
+            opacity: 0;
+            z-index: 100000;
         }
-        @keyframes glitch-anim {
-            0% { clip: rect(33px, 9999px, 11px, 0); }
-            20% { clip: rect(89px, 9999px, 13px, 0); }
-            40% { clip: rect(12px, 9999px, 78px, 0); }
-            60% { clip: rect(56px, 9999px, 34px, 0); }
-            80% { clip: rect(1px, 9999px, 66px, 0); }
-            100% { clip: rect(44px, 9999px, 92px, 0); }
+
+        /* Global image distortion triggered by JS */
+        img, .manga-panel {
+            transition: transform 0.1s ease-out, filter 0.1s ease-out;
         }
-        @keyframes glitch-anim2 {
-            0% { clip: rect(12px, 9999px, 55px, 0); }
-            20% { clip: rect(76px, 9999px, 33px, 0); }
-            40% { clip: rect(4px, 9999px, 88px, 0); }
-            60% { clip: rect(22px, 9999px, 11px, 0); }
-            80% { clip: rect(67px, 9999px, 44px, 0); }
-            100% { clip: rect(8px, 9999px, 22px, 0); }
+
+        .distorted {
+            filter: contrast(150%) brightness(120%) hue-rotate(90deg) !important;
+            transform: skew(2deg) scale(1.01) !important;
         }
-        .clip-corner-br {
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%);
+
+        @keyframes noise-jitter {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-1%, -1%); }
+            20% { transform: translate(1%, 1%); }
+            30% { transform: translate(-2%, 0); }
+            40% { transform: translate(2%, 1%); }
+            50% { transform: translate(-1%, -2%); }
+            60% { transform: translate(1%, 2%); }
+            70% { transform: translate(-2%, 1%); }
+            80% { transform: translate(2%, -1%); }
+            90% { transform: translate(-1%, 1%); }
+            100% { transform: translate(0, 0); }
         }
-        .clip-corner-tl-br {
-            clip-path: polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px);
-        }::-webkit-scrollbar {
-            width: 8px;
+
+        /* Bidirectional Scroll Animation States */
+        .reveal {
+            opacity: 0;
+            filter: blur(10px);
+            transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
         }
-        ::-webkit-scrollbar-track {
-            background: #050505; 
+
+        .reveal-left { transform: translateX(-80px); }
+        .reveal-right { transform: translateX(80px); }
+        .reveal-bottom { transform: translateY(80px); }
+        .reveal-pop { transform: scale(0.8); }
+
+        .reveal.active {
+            opacity: 1;
+            filter: blur(0);
+            transform: translate(0, 0) scale(1);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #2DD4BF; 
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .footer-panel {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .footer-trigger:hover .footer-panel {
+            transform: translate(-50%, 10px);
         }
     </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 font-mono overflow-x-hidden selection:bg-primary selection:text-white crt">
-<div class="fixed inset-0 z-0 opacity-10 pointer-events-none bg-grid-pattern bg-[length:40px_40px]"></div>
-<nav class="fixed top-0 w-full z-40 border-b border-primary/30 bg-background-dark/90 backdrop-blur-sm">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-<div class="flex justify-between items-center h-16">
-<div class="flex items-center space-x-2">
-<span class="material-icons text-primary animate-pulse">radar</span>
-<span class="font-display font-bold text-lg tracking-widest text-white">after school anime club<span class="text-accent">_SYS</span></span>
+<body class="bg-background-dark font-display text-slate-100 selection:bg-accent-pink selection:text-white overflow-x-hidden">
+<!-- CRT Layer (Absolute Top) -->
+<div class="crt-container" id="crt-root">
+<div class="crt-scanlines"></div>
+<div class="crt-noise"></div>
+<div class="glitch-flash" id="flash"></div>
+<div class="glitch-horizontal" id="h-glitch"></div>
 </div>
-<div class="hidden md:flex space-x-8 text-sm tracking-widest">
-<a class="text-gray-400 hover:text-accent transition-colors duration-200" href="#">[ OBJECTIVES ]</a>
-<a class="text-gray-400 hover:text-accent transition-colors duration-200" href="\inventory.html">[ INVENTORY ]</a>
-<a class="text-gray-400 hover:text-accent transition-colors duration-200" href="#">[ DATABASE ]</a>
-</div>
-<div class="flex items-center space-x-4 text-xs font-mono text-secondary">
-<div class="flex flex-col text-right hidden sm:block">
-<span class="block text-accent">SYS.ONLINE</span>
-<span class="block opacity-70">LAT: 35.6762 N</span>
-</div>
-<div class="h-8 w-8 border border-accent flex items-center justify-center relative">
-<div class="absolute inset-0 bg-accent/20 animate-ping"></div>
-<span class="material-icons text-accent text-sm">wifi</span>
+<div class="relative w-full max-w-[1440px] mx-auto px-4 md:px-8 py-12 space-y-16">
+<!-- HEADER / INTRO PANEL -->
+<header class="relative grid grid-cols-12 gap-4 items-center min-h-[500px]">
+<!-- Logo Panel - Double Size, Floating, Positioned Behind (Z-0) -->
+<div class="col-span-12 md:col-span-6 p-4 z-0 reveal reveal-left active">
+<div class="relative h-full w-full">
+<img alt="After School Anime Club Logo" class="w-full mx-auto drop-shadow-[12px_12px_0px_rgba(0,0,0,0.8)] max-w-[800px] animate-float" src="https://lh3.googleusercontent.com/aida/ADBb0ujQaTncmu5fSIivsbrJ0bMJNv5IhKEgOKcSrQiu_OiL2hEZt8IIG5Yd6hK3uHvxaHRvzUXYt-VmUUNsBm8640b5R4cKjrjleIvF5k14L0ZnFTw21F3AqX-HJW1OiWaIv5ywDV32yZXd8LqhTUWPA8ilBA0k1VKEJAIB-fUa1cQh2I_2mLwG-GWlfnZyOLDaAdhLx3T3FORbNa2GhVeuzNaVjq13LeL4rtMI0RspXK0LKO5kqbR4_JOgmd0atNFx_sww7dDU16PMeD0"/>
+<div class="absolute top-0 right-0 bg-accent-cyan text-black font-manga px-6 py-2 border-2 border-black rotate-12 z-10 whitespace-nowrap shadow-[4px_4px_0px_black] text-xl">NEW ISSUE!</div>
 </div>
 </div>
+<!-- Hero Text Bubble -->
+<div class="col-span-12 md:col-span-6 flex flex-col justify-center items-start md:pl-8 pt-8 md:pt-0 z-10">
+<h1 class="font-manga text-6xl md:text-8xl italic action-text mb-6 leading-none uppercase reveal reveal-right active">Ready to Join the club?</h1>
+<div class="speech-bubble w-full max-w-lg ml-4 md:ml-8 rotate-2 reveal reveal-bottom active" style="transition-delay: 0.2s;">
+<p class="font-bold text-xl leading-tight uppercase">"We wouldn’t be able to survive alone. Together, we can build each other up for a better and brighter future."</p>
 </div>
 </div>
-<div class="h-0.5 w-full bg-gradient-to-r from-transparent via-accent to-transparent opacity-50"></div>
-</nav>
-<div class="fixed left-0 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-4 pl-4 z-30 pointer-events-none mix-blend-screen">
-<div class="w-1 h-32 bg-gradient-to-b from-transparent via-primary to-transparent"></div>
-<div class="writing-vertical-lr text-xs text-primary/60 font-retro tracking-widest rotate-180">NEO-TOKYO SECTOR 7</div>
+</header>
+<!-- THE STORY FLOW / CHAPTERS -->
+<main class="space-y-32">
+<!-- CHAPTER 1: THE ART -->
+<section class="relative">
+<div class="flex items-center gap-4 mb-12 reveal reveal-left">
+<span class="font-manga text-4xl text-primary">CH. 01</span>
+<div class="h-[2px] flex-1 bg-primary"></div>
+<h2 class="font-manga text-5xl uppercase italic text-white">The Art</h2>
 </div>
-<div class="fixed right-0 top-1/2 -translate-y-1/2 hidden lg:flex flex-col gap-2 pr-4 z-30 pointer-events-none items-end">
-<div class="w-16 h-[1px] bg-accent/50"></div>
-<div class="w-8 h-[1px] bg-accent/30"></div>
-<div class="w-24 h-[1px] bg-accent/70"></div>
-<div class="text-xs text-accent font-mono mt-2">V.2.0.44</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+<!-- Large Panel -->
+<div class="md:col-span-2 manga-panel diagonal-panel-right min-h-[400px] aspect-video md:aspect-auto md:h-[550px] group reveal reveal-left overflow-hidden">
+<div class="absolute inset-0 screentone opacity-40"></div>
+<img alt="Vaporwave Ramen Shop" class="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/ADBb0ugpjmOMv22JevVoPe1YoqcPleEa_lqaChtjUKoxYm6sp4OowDyyjekbLL517LzOTkkQwEKga9opBp6i7_ixzGaGHY_dpe_4HuJvb6YlXsOfte8hC7hlX11nSXoMcPwfwHSJF8bsWupBxq-Z-Cc9se29MxBA26tWWk3YGwNxp4yBPHH1UEzuCWGXnKIxHhVs-yQtqdPSetwss9s2DgiZzJMaxKQy6wBx3l9zsdWZjge2qJfedZTlfalN03_4TFyRta6hqJgZcNcn1Bc"/>
+<div class="absolute top-8 left-8 bg-black/90 p-6 border-4 border-primary max-w-[80%] md:max-w-xs rotate-[-2deg] shadow-[6px_6px_0px_black]">
+<p class="font-manga text-2xl text-accent-cyan mb-2 uppercase">Hot and Fresh</p>
+<p class="text-sm font-bold leading-snug">We're serving up club exclusives and collabs you won't find anywhere else.</p>
 </div>
-<main class="relative z-10 pt-20 pb-12">
-<section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-<div class="absolute inset-0 z-0">
-<div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] animate-pulse-slow"></div>
-<div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[100px]"></div>
+<div class="absolute bottom-12 right-12 font-manga text-6xl md:text-9xl text-primary/40 pointer-events-none italic">BELIEVE IT!</div>
 </div>
-<div class="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center relative z-10">
-<div class="order-2 lg:order-1 space-y-8">
-<div class="inline-block px-3 py-1 border border-accent/50 text-accent text-xs font-mono tracking-widest uppercase bg-accent/10 clip-corner-br mb-4">
-                        // Protocol: IMMERSION_INIT
-                    </div>
-<h1 class="font-display text-5xl md:text-7xl font-black text-white leading-tight">
-<span class="block glitch-text" data-text="AFTER SCHOOL">AFTER SCHOOL</span>
-<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary glitch-text" data-text="ANIME CLUB">ANIME CLUB</span>
-</h1>
-<p class="text-gray-400 font-mono text-lg max-w-lg leading-relaxed border-l-2 border-primary pl-4">
-                        Welcome to the club. Secure your exclusive gear and limited edition artifacts. The portal is open.
-                    </p>
-<a href="\club.html" class="link-container"><div class="flex flex-col sm:flex-row gap-4 pt-4">
-<button class="group relative px-8 py-4 bg-transparent overflow-hidden clip-corner-tl-br border border-accent hover:border-primary transition-colors duration-300">
-<div class="absolute inset-0 w-0 bg-accent transition-all duration-[250ms] ease-out group-hover:w-full opacity-20"></div>
-<span class="relative text-accent group-hover:text-white font-display font-bold tracking-widest uppercase flex items-center gap-2">
-                                Enter The Club <span class="material-icons text-sm">arrow_forward</span>
-</span>
-</button></a>
-<button class="px-8 py-4 border border-gray-700 hover:border-white text-gray-400 hover:text-white font-mono uppercase tracking-widest text-sm transition-all duration-300 clip-corner-br">
-                            View Manifest
-                        </button>
+<!-- Small Vertical Panel -->
+<div class="manga-panel p-0 bg-accent-pink/10 min-h-[550px] reveal reveal-right overflow-hidden">
+<div class="absolute inset-0 speed-lines-bg pointer-events-none"></div>
+<div class="p-8 h-full flex flex-col justify-between relative z-10">
+<div class="space-y-4">
+<div class="border-4 border-black p-2 bg-white text-black font-black uppercase text-center rotate-3 shadow-[4px_4px_0px_black]">Collect Now</div>
+<img alt="Featured Print" class="w-full border-4 border-black shadow-[6px_6px_0px_black]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDAHcMQ47MQHCuvYkfTdExQRielEu2det-SjqTVZxur-2eI-7T2NWpet8ppbBi-fVHZBjpCpA7C_jHQVK-FF6NvYDy2K-v7lhH8tNP2kYSJVFwzfDwzwH2ppuZYiobsh0476-ichTYfvN1q-kDwxjMV-Dbk5Jwugxnw9e5cpal8j9-cK9SQTplWdL5r1hfBXDaEjDLNnWaDiDO92VN4t6zM7by1uLQtamlZK2UmpRmpbDxd1xa31fUtaNKiOCMmhJm4Up8xFHBynwlU"/>
 </div>
-</div>
-<div class="order-1 lg:order-2 flex justify-center relative">
-<div class="absolute inset-0 flex items-center justify-center">
-<div class="w-[300px] h-[300px] md:w-[500px] md:h-[500px] border border-primary/20 rounded-full animate-[spin_10s_linear_infinite]"></div>
-<div class="absolute w-[280px] h-[280px] md:w-[460px] md:h-[460px] border border-accent/20 rounded-full animate-[spin_15s_linear_infinite_reverse] border-dashed"></div>
-</div>
-<div class="relative w-80 h-80 md:w-[500px] md:h-[500px] animate-float">
-<img src="images/MainLogo.png" width="500" height="500" alt=""/>
-<div class="absolute inset-0 bg-primary/20 mix-blend-overlay opacity-0 hover:opacity-100 transition-opacity duration-100 clip-corner-tl-br" style="clip-path: polygon(0 0, 100% 0, 100% 10%, 0 10%); animation: glitch 2s infinite;"></div>
-</div>
-</div>
-</div>
-<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
-<span class="text-[10px] text-accent font-mono uppercase tracking-widest">Scroll to Initialize</span>
-<div class="w-[1px] h-12 bg-gradient-to-b from-accent to-transparent"></div>
-</div>
-</section>
-<div class="border-y border-white/10 bg-black/50 backdrop-blur-md py-4 mb-24 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent animate-scan"></div>
-<div class="container mx-auto px-4 flex justify-between md:justify-around text-xs md:text-sm font-mono text-gray-400 uppercase tracking-widest">
-<div class="flex items-center gap-2">
-<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    Server Status: Online
-                </div>
-<div class="hidden md:block">Next Drop: <span class="text-primary">T-Minus 04:00:00</span></div>
-<div>Users Active: <span class="text-accent count-up">8,402</span></div>
-</div>
-</div>
-<section class="container mx-auto px-4 mb-32 relative">
-<div class="flex items-end justify-between mb-12 border-b border-gray-800 pb-4">
-<div>
-<h2 class="text-3xl font-display font-bold text-white mb-1">
-<span class="text-primary">01.</span> MISSION OBJECTIVES
-                    </h2>
-<p class="text-gray-500 font-mono text-sm">LIMITED EDITION ART PRINTS</p>
-</div>
-<div class="hidden md:block font-retro text-2xl text-accent">
-                    [ ///////// ]
-                </div>
-</div>
-<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-<div class="group relative bg-terminal-gray border border-gray-800 hover:border-primary transition-all duration-300">
-<div class="relative h-64 overflow-hidden bg-black">
-<div class="absolute top-2 right-2 bg-primary text-black text-xs font-bold px-2 py-1 z-10">RARE</div>
-<img alt="Cyberpunk City Print" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbZV5RTbKos4lkmsJOY9g94j1Zp4zXwBB5vo7wnF0LVow1WfeA5kc2MjFvzAmiOL4Q445KDPGMQ3jRoFEZyQEH3tuwguSMdRyZIouLIBTNIsbYkHoNV8sVih-rTjl_P87Tkw2FJ3UsoRsrCPBzpZehIBLSRj21WR3IRhzJ1McjTn82zb58WvZw8NSWuX22-QZuDT8N6HV_dDE9EBnP_j_Xlv8GMPk-YDqs_dBUwTj1Fo_cf9OEqtLWuFYoWSClDC8N3jLaGXb1YoM"/>
-<div class="absolute inset-0 bg-gradient-to-t from-terminal-gray to-transparent"></div>
-</div>
-<div class="p-6">
-<h3 class="font-display text-xl text-white mb-2 group-hover:text-primary transition-colors">NEO-SHIBUYA NIGHTS</h3>
-<div class="flex justify-between items-center font-mono text-sm text-gray-400 mb-4">
-<span>EDITION: 50/500</span>
-<span class="text-accent">¥ 4,500</span>
-</div>
-<button class="w-full py-2 border border-gray-600 text-xs uppercase tracking-widest text-gray-300 hover:bg-primary hover:text-black hover:border-primary transition-all">
-                            Add to Database
-                        </button>
-</div>
-</div>
-<div class="group relative bg-terminal-gray border border-gray-800 hover:border-primary transition-all duration-300">
-<div class="relative h-64 overflow-hidden bg-black">
-<div class="absolute top-2 right-2 bg-accent text-black text-xs font-bold px-2 py-1 z-10">NEW</div>
-<img alt="Mecha Portrait Print" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALTfYiOXfGDhDONveKjRlOeRQAZG5YtFlI8KS5UGED9ISxiOP4CLUPiQ1afadHXIZlnagiZqWNT13fjj7oOcDoi2PUhhBywzNHxcPn3P0DhlsHTApNfcyvGhpPbzWgnpDQ4Qk1ZcFoyLH0LWq9eHQZ2li_Q1noQ-fWwHO_O0F3sFSi41cEuvZQ6w4SzJmhbEa_J1cUBcP9lwkp-SGWQ1UBfBpV1UvyyIDzfKpGLSfYYusSfGqr_H8m98KPACMb4aFzWdIQH4-QvzI"/>
-<div class="absolute inset-0 bg-gradient-to-t from-terminal-gray to-transparent"></div>
-</div>
-<div class="p-6">
-<h3 class="font-display text-xl text-white mb-2 group-hover:text-primary transition-colors">GHOST IN THE SHELL</h3>
-<div class="flex justify-between items-center font-mono text-sm text-gray-400 mb-4">
-<span>EDITION: 12/200</span>
-<span class="text-accent">¥ 6,000</span>
-</div>
-<button class="w-full py-2 border border-gray-600 text-xs uppercase tracking-widest text-gray-300 hover:bg-primary hover:text-black hover:border-primary transition-all">
-                            Add to Database
-                        </button>
-</div>
-</div>
-<div class="group relative bg-terminal-gray border border-gray-800 hover:border-primary transition-all duration-300">
-<div class="relative h-64 overflow-hidden bg-black">
-<img alt="Neon Street Print" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC98aII6YCrBKyL4fRNNg5prNVd_pKw8mDof3wPNrgRo5eGzThEr5DG-5mPvE1cPwjGYN6IGKmjBbgqzoFvEZdP1QOKCuUlycHMBdOBPB8bLL5sRBbTx9u3ZRKF0kIZqBQ0Eo1sAo8QDzYwOLOtzw7gGnjvLnbhwrmq-igvM6LkR3PE5GskfFayi2uf1LW4XE7K2Tg-WyKlzEn68qUBV-dxxbTlz7cqFlWPFy6LJgIk-Hb16V9o1p_5PU7YHjHwT9r4lJDE_t4CDt0"/>
-<div class="absolute inset-0 bg-gradient-to-t from-terminal-gray to-transparent"></div>
-</div>
-<div class="p-6">
-<h3 class="font-display text-xl text-white mb-2 group-hover:text-primary transition-colors">DATA RAIN</h3>
-<div class="flex justify-between items-center font-mono text-sm text-gray-400 mb-4">
-<span>EDITION: 88/100</span>
-<span class="text-accent">¥ 5,200</span>
-</div>
-<button class="w-full py-2 border border-gray-600 text-xs uppercase tracking-widest text-gray-300 hover:bg-primary hover:text-black hover:border-primary transition-all">
-                            Add to Database
-                        </button>
+<button class="w-full bg-primary text-white font-manga py-4 text-2xl border-4 border-black shadow-[8px_8px_0px_black] hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-x-2 active:translate-y-2 transition-all mt-4">VIEW PRINTS</button>
 </div>
 </div>
 </div>
 </section>
-<section class="container mx-auto px-4 mb-32">
-<div class="flex flex-row-reverse items-end justify-between mb-12 border-b border-gray-800 pb-4 text-right">
-<div>
-<h2 class="text-3xl font-display font-bold text-white mb-1">
-                        INVENTORY <span class="text-secondary">.02</span>
-</h2>
-<p class="text-gray-500 font-mono text-sm">CYBERNETIC WEARABLES</p>
+<!-- CHAPTER 2: THE APPAREL -->
+<section class="relative">
+<div class="flex items-center gap-4 mb-20 justify-end reveal reveal-right">
+<h2 class="font-manga text-5xl uppercase italic text-white text-right">The Apparel</h2>
+<div class="h-[2px] flex-1 bg-accent-pink"></div>
+<span class="font-manga text-4xl text-accent-pink">CH. 02</span>
 </div>
-<div class="hidden md:block font-retro text-2xl text-secondary">
-                    [ SYS.LOAD_GEAR ]
-                </div>
-</div>
-<div class="relative bg-gradient-to-r from-terminal-gray to-background-dark border-y border-secondary/30 p-8 md:p-12 overflow-hidden">
-<div class="absolute right-0 top-0 h-full w-1/3 bg-secondary/5 skew-x-12 transform origin-bottom-right"></div>
-<div class="grid md:grid-cols-2 gap-12 items-center">
-<div class="space-y-6 relative z-10">
-<div class="text-secondary font-mono text-xs tracking-[0.3em]">CLASS: LEGENDARY</div>
-<h3 class="text-4xl md:text-5xl font-display font-bold text-white">TOKYO DRIFT BOMBER</h3>
-<p class="text-gray-400 font-mono leading-relaxed">
-                            Reinforced polymer fabric with integrated LED piping. Weather-resistant coating suitable for acid rain conditions. Includes hidden dataport pockets.
-                        </p>
-<div class="flex gap-4">
-<div class="w-12 h-12 border border-gray-600 flex items-center justify-center hover:border-accent cursor-pointer text-gray-400 hover:text-white font-mono">S</div>
-<div class="w-12 h-12 border border-white flex items-center justify-center cursor-pointer text-white font-mono bg-white/10">M</div>
-<div class="w-12 h-12 border border-gray-600 flex items-center justify-center hover:border-accent cursor-pointer text-gray-400 hover:text-white font-mono">L</div>
-<div class="w-12 h-12 border border-gray-600 flex items-center justify-center hover:border-accent cursor-pointer text-gray-400 hover:text-white font-mono">XL</div>
-</div>
-<div class="pt-4">
-<button class="bg-secondary hover:bg-secondary/80 text-white font-bold py-3 px-8 clip-corner-br tracking-widest uppercase text-sm">
-                                Acquire Asset
-                             </button>
+<div class="relative min-h-[500px] md:h-[650px] flex items-center justify-center">
+<div class="manga-panel w-full max-w-3xl aspect-[16/10] md:h-[500px] z-10 -rotate-2 border-accent-pink reveal reveal-pop overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<img alt="Apparel Shot" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBU49AD1-5yNWnOvZhqvyJznS5zbTsQfb3E6MeUCw0BGgpiRGWjVxUx8xLnEwQn_RVEMsMgxC6UjwVaF0aOViUtiWTff8BVwQbA7Oc_EpSuZCJjzb3eHJHGdRWpaZOCXhoUoew2-Wgnz-iciSr6OWlgl9V5pZi2iWG_pcrmyCCPZ8JSRIDWp_pPBq5tXTDoLOItopDzU-WY1039SuMzOSLVOfNUezUN6NqxpPgMfczL_fqHTcMO5L-VF4EQHYDiLt3_BKIGUQHSaOuJ"/>
+<div class="absolute bottom-8 left-8 right-8">
+<h3 class="font-manga text-4xl md:text-5xl text-white italic action-text">STREETWEAR FOR DRIFTERS</h3>
 </div>
 </div>
-<div class="relative flex justify-center">
-<div class="absolute inset-0 border border-secondary/30 rounded-full animate-ping opacity-20"></div>
-<img alt="Bomber Jacket" class="relative z-10 w-3/4 md:w-full object-contain filter drop-shadow-[0_0_15px_rgba(139,92,246,0.3)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtghg5h44XfE8_9xNlpGUR-DY-RG3sMokiMJV2Z6TgxTtbxrosYzg8quv5jYpQrzIxUT_KumSPkYFzOJFnHgFFqfac_i-JokhklFAuQoltnzjLmc7NAbDEVesUWhuhtW5Bq-3v6TiSga9OVUFwoeKZGcoyU_w65Eyjat9XqDFpKPohO2ErDSLmMoPeTfWigQxKy2mpWpc-5V-ZxvLkj_IX7lkwpwa0di_pN1zQiJ8i4PZZ9Nx_l7qzMqYkDTR-JS8JOiAwfgfiT64"/>
+<div class="absolute top-0 left-0 md:left-24 manga-panel w-56 h-72 md:w-72 md:h-96 rotate-12 z-20 border-accent-cyan hidden lg:block reveal reveal-left overflow-hidden" style="transition-delay: 0.3s;">
+<img alt="Apparel Detail" class="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD6X8Kpk0GZnl4SAy5kHabwIpWVkwIv_Y5PBWm5TMEV0MzbUJrLoZevf3qJ27TkglgEdi_KIzhzj6KJw3VPc1XyelbtWlmVh67bnxgZcQfxGFQ_IVYS5XdxQweusPuJRjCNyY1JVKaZKWfOspIGiXkBmECi_ZW_3TCPtPX5Xfscdzwnf5aW13lXNcJfqy9fd-cVHXJOaAVhsnioIk8cKFvDwHvaANQn11qvvQn6-7apo6JMp2Jd-Mnfdr-6QA5TtnRosglYOfcDIIFI"/>
+<div class="absolute inset-0 screentone opacity-30"></div>
 </div>
+<div class="absolute -bottom-10 right-0 md:right-24 manga-panel w-56 h-56 md:w-72 md:h-72 -rotate-6 z-20 bg-background-dark p-8 flex flex-col justify-center text-center reveal reveal-right border-accent-pink shadow-[12px_12px_0px_black]" style="transition-delay: 0.5s;">
+<p class="font-manga text-3xl md:text-4xl text-accent-pink leading-none mb-4">LIMITED DROPS ONLY</p>
+<p class="text-xs font-bold uppercase tracking-widest text-slate-400">Once it's gone, it's gone!</p>
 </div>
 </div>
 </section>
-<section class="container mx-auto px-4 mb-20">
-<div class="flex items-end justify-between mb-8">
-<div>
-<h2 class="text-3xl font-display font-bold text-white mb-1">
-<span class="text-accent">03.</span> ARMORY DISPLAY
-                    </h2>
-<p class="text-gray-500 font-mono text-sm">COLLECTIBLE FIGURES</p>
+<!-- CHAPTER 3: THE CLUB -->
+<section class="relative">
+<div class="flex items-center gap-4 mb-12 reveal reveal-left">
+<span class="font-manga text-4xl text-accent-cyan">CH. 03</span>
+<div class="h-[2px] flex-1 bg-accent-cyan"></div>
+<h2 class="font-manga text-5xl uppercase italic text-white">The Club</h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="md:col-span-1 manga-panel diagonal-panel-left bg-primary p-8 flex flex-col items-center justify-center text-center reveal reveal-left min-h-[220px]">
+<span class="material-symbols-outlined text-7xl mb-2 text-white">groups</span>
+<p class="font-manga text-5xl text-white">5K+</p>
+<p class="font-bold text-sm uppercase tracking-[0.2em]">MEMBERS</p>
+</div>
+<div class="md:col-span-2 manga-panel bg-white p-10 reveal reveal-bottom min-h-[280px] flex flex-col justify-center border-black shadow-[10px_10px_0px_black]">
+<div class="absolute inset-0 screentone opacity-10 pointer-events-none"></div>
+<div class="relative z-10 text-black">
+<h4 class="font-manga text-4xl mb-6 italic leading-none">JOIN THE CLUB</h4>
+<p class="font-bold mb-8 text-lg">Get exclusive access to art prints and the Discord server where the lore unfolds. It's more than a club—it's a movement.</p>
+<button class="bg-black text-white font-manga px-10 py-4 text-2xl border-b-[10px] border-primary active:border-b-0 active:translate-y-2 transition-all">JOIN DISCORD</button>
 </div>
 </div>
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-<div class="col-span-1 md:col-span-2 row-span-2 relative group overflow-hidden border border-gray-800 rounded-lg">
-<img alt="Main Figure" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHgrXv5yxUtWc_-gbOqKQPtuYhfDW_PkyXIOuQsxcV4B2HrgRwQnwRrdnC7Oc_-K6GY4Wpek27toKHQ68T70ufPwieNW3SDDWyIpk6bXc_hibcgYxqt1KXzEaFNpEdtSef46taBBrn_eij3SPXokd65N3YvDQj14XUvozr0Xgj12ZNBhZWqL5yGCibO5pyRG1JDcvaOXgdHM0jqU1aZOPf1IIiBm7TVEbRy1CtYg19P1xtbG376_PWV1sH2_0gGUOZqWumKcsuDP4"/>
-<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80"></div>
-<div class="absolute bottom-0 left-0 p-6 w-full">
-<h3 class="text-2xl font-display text-white">MK-IV SENTINEL</h3>
-<p class="text-accent font-mono text-sm">1/7 SCALE • PVC</p>
-</div>
-</div>
-<div class="relative group overflow-hidden border border-gray-800 rounded-lg h-64">
-<img alt="Figure Detail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGttu21VQ4X3Exp5kASvH4bh8KVjaBeEMru78uuu6BNQepnyLYrwSThhdMfKAXu17_RNJf1n9XRZtcLxZdNAKCqv9hH0fRBaFI_u_Ccw__JbDDRIUIwelLazXcmCYc0MMiLgtSyi84QOs01EnL_RCSYHf4piiIIyqYIUvadYu87R6_Rz5aNzhRGfGbt-0VYHfUbEgZR1DlJ31_EKUkFPnBE9BPSmKemw6IbzXcVlmcnhbwlURUC1FeQKqt1QREh-YEG7sknuc_mt0"/>
-<div class="absolute inset-0 bg-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-</div>
-<div class="relative group overflow-hidden border border-gray-800 rounded-lg h-64">
-<img alt="Figure Detail" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCz2dL2kynLo-vHxQRnPXaNRfUIi0Qmks-NSEZYTsPkFM2vMyBqhaegQWvspo1f94B_CkClFrP5OgN5Kr2D-LL3O0nykZgIoO78hnG2c2ykqTx6dtFfkJYE1yeaMA-9dMArCRsoFYsGKHYjuT-JpVGO7vTz7HQPJMTGyZbLIVg8Bw71y0AJxC00Xlvx7Sr1UuIfs5J00TUqMPnJ8jqgXbcRBoRvoPeBMAXh-68JA_BS962kSAHWeg64TRJrXQcgZmWYiDN_zlYNh7M"/>
-<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-</div>
-<div class="col-span-2 bg-terminal-gray border border-accent/20 flex flex-col items-center justify-center p-8 text-center relative overflow-hidden group">
-<div class="absolute inset-0 bg-accent/5 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-<span class="material-icons text-4xl text-accent mb-4 relative z-10">view_in_ar</span>
-<h3 class="text-xl font-display text-white mb-2 relative z-10">VIEW FULL COLLECTION</h3>
-<button class="text-accent font-mono text-xs uppercase tracking-widest border-b border-accent relative z-10">Access Database</button>
+<div class="md:col-span-1 manga-panel diagonal-panel-right bg-accent-pink p-8 flex flex-col items-center justify-center text-center reveal reveal-right min-h-[220px]">
+<span class="material-symbols-outlined text-7xl mb-2 text-white">bolt</span>
+<p class="font-manga text-5xl text-white">12+</p>
+<p class="font-bold text-sm uppercase tracking-[0.2em]">ACTIVE DROPS</p>
 </div>
 </div>
 </section>
-<footer class="border-t border-gray-800 bg-black pt-16 pb-8 relative">
-<div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-primary via-accent to-secondary"></div>
-<div class="container mx-auto px-4 grid md:grid-cols-4 gap-12 mb-12">
-<div class="col-span-1 md:col-span-2">
-<h3 class="text-2xl font-display font-bold text-white mb-6">JOIN THE <span class="text-primary">CLUB</span></h3>
-<p class="text-gray-400 font-mono mb-6 max-w-sm">Subscribe to the frequency. Get notified about limited drops, secret passcodes, and offline meetups.</p>
-<div class="flex max-w-md">
-<input class="bg-gray-900 border border-gray-700 text-white font-mono w-full px-4 py-3 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent" placeholder="ENTER_EMAIL_ADDRESS" type="email"/>
-<button class="bg-primary text-white px-6 py-3 font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
-                            SUBMIT
-                        </button>
+</main>
+<!-- FOOTER PANEL -->
+<footer class="footer-trigger relative mt-48 h-[400px] reveal reveal-bottom">
+<div class="gutter-space mb-0"></div>
+<div class="footer-panel absolute -top-16 left-1/2 -translate-x-1/2 manga-panel p-16 bg-background-dark max-w-5xl w-full text-center z-30 shadow-[15px_15px_0px_black]">
+<div class="absolute inset-0 speed-lines-bg opacity-20 pointer-events-none"></div>
+<div class="relative z-10">
+<div class="flex flex-wrap justify-center gap-16 mb-12">
+<div class="flex flex-col gap-3">
+<p class="font-manga text-2xl text-primary">NAV</p>
+<a class="font-bold text-base uppercase hover:text-accent-pink transition-colors" href="#">Art</a>
+<a class="font-bold text-base uppercase hover:text-accent-pink transition-colors" href="#">Apparel</a>
+<a class="font-bold text-base uppercase hover:text-accent-pink transition-colors" href="#">Club</a>
+</div>
+<div class="flex flex-col gap-3">
+<p class="font-manga text-2xl text-accent-pink">INFO</p>
+<a class="font-bold text-base uppercase hover:text-accent-cyan transition-colors" href="#">Shipping</a>
+<a class="font-bold text-base uppercase hover:text-accent-cyan transition-colors" href="#">Returns</a>
+<a class="font-bold text-base uppercase hover:text-accent-cyan transition-colors" href="#">Privacy</a>
+</div>
+<div class="flex flex-col gap-3">
+<p class="font-manga text-2xl text-accent-cyan">FOLLOW</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-3xl hover:text-white cursor-pointer transition-colors">share</span>
+<span class="material-symbols-outlined text-3xl hover:text-white cursor-pointer transition-colors">chat</span>
+<span class="material-symbols-outlined text-3xl hover:text-white cursor-pointer transition-colors">alternate_email</span>
 </div>
 </div>
-<div>
-<h4 class="text-white font-display font-bold mb-4 tracking-widest">SECTORS</h4>
-<ul class="space-y-2 text-gray-500 font-mono text-sm">
-<li><a class="hover:text-accent transition-colors" href="#">Art Prints</a></li>
-<li><a class="hover:text-accent transition-colors" href="#">Apparel</a></li>
-<li><a class="hover:text-accent transition-colors" href="#">Figures</a></li>
-<li><a class="hover:text-accent transition-colors" href="#">Accessories</a></li>
-</ul>
 </div>
-<div>
-<h4 class="text-white font-display font-bold mb-4 tracking-widest">PROTOCOL</h4>
-<ul class="space-y-2 text-gray-500 font-mono text-sm">
-<li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Shipping Log</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Returns</a></li>
-<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
-</ul>
+<div class="pt-10 border-t border-slate-800">
+<p class="font-manga text-3xl tracking-tighter uppercase italic opacity-50">Analog Heart // Digital Soul</p>
+<p class="text-xs font-black uppercase tracking-[0.4em] text-slate-600 mt-3">© 2024 After School Anime Club. To be continued...</p>
 </div>
-</div>
-<div class="container mx-auto px-4 border-t border-gray-900 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 font-mono">
-<div class="mb-4 md:mb-0">
-                    © 2088 AFTER SCHOOL ANIME CLUB. ALL RIGHTS RESERVED.
-                </div>
-<div class="flex space-x-6">
-<a class="hover:text-white transition-colors" href="#">INSTAGRAM</a>
-<a class="hover:text-white transition-colors" href="#">TWITTER</a>
-<a class="hover:text-white transition-colors" href="#">DISCORD</a>
 </div>
 </div>
 </footer>
-</main>
+</div>
+<!-- Decorative Floating elements -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+<div class="absolute top-1/4 -left-20 font-manga text-[100px] md:text-[200px] text-white/[0.03] rotate-90 select-none">ORAORA!!</div>
+<div class="absolute bottom-1/4 -right-20 font-manga text-[100px] md:text-[200px] text-primary/[0.03] -rotate-90 select-none">KABOOM</div>
+</div>
 <script>
-        // Simple script to update the active count randomly
-        const countElement = document.querySelector('.count-up');
-        setInterval(() => {
-            const current = parseInt(countElement.innerText.replace(',', ''));
-            const change = Math.floor(Math.random() * 10) - 4;
-            countElement.innerText = (current + change).toLocaleString();
-        }, 3000);
-    </script>
+    // --- ADVANCED CRT GLITCH LOGIC ---
+    const flashEl = document.getElementById('flash');
+    const hGlitchEl = document.getElementById('h-glitch');
+    const allVisuals = document.querySelectorAll('img, .manga-panel');
 
+    function triggerGlitch() {
+        const glitchType = Math.random();
+        
+        // 1. Brief flash of white/static
+        if (glitchType < 0.15) {
+            flashEl.style.opacity = '0.1';
+            setTimeout(() => flashEl.style.opacity = '0', 50);
+        }
 
-</body></body></html>
+        // 2. Horizontal scanline crack
+        if (glitchType < 0.3) {
+            hGlitchEl.style.top = Math.random() * 100 + '%';
+            hGlitchEl.style.opacity = '0.5';
+            setTimeout(() => hGlitchEl.style.opacity = '0', 100);
+        }
 
+        // 3. Distortion of images/panels
+        if (glitchType < 0.25) {
+            allVisuals.forEach(el => el.classList.add('distorted'));
+            setTimeout(() => {
+                allVisuals.forEach(el => el.classList.remove('distorted'));
+            }, 80);
+        }
 
+        // Randomize next glitch timing
+        setTimeout(triggerGlitch, Math.random() * 3000 + 500);
+    }
 
+    // Start Glitch Engine
+    triggerGlitch();
 
+    // Intersection Observer for Bidirectional Scroll Animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
 
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            } else {
+                const box = entry.target.getBoundingClientRect();
+                if (box.top > window.innerHeight || box.bottom < 0) {
+                    entry.target.classList.remove('active');
+                }
+            }
+        });
+    }, observerOptions);
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const revealElements = document.querySelectorAll('.reveal');
+        revealElements.forEach(el => observer.observe(el));
+    });
+</script>
+</body></html>
