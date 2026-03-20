@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-tertiary-fixed-variant": "#004f54",
+              "surface-container": "#191022",
+              "background": "#0a0612",
+              "tertiary-fixed": "#caffff",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#cec2d9",
+              "surface-bright": "#191022",
+              "primary": "#7f0df2",
+              "on-tertiary-fixed": "#002022",
+              "on-primary": "#ffffff",
+              "on-tertiary": "#000000",
+              "secondary-fixed-dim": "#ffafff",
+              "secondary-fixed": "#ffdcff",
+              "on-error": "#690005",
+              "outline-variant": "#7f0df2",
+              "primary-container": "#7f0df2",
+              "surface-container-low": "#0a0612",
+              "on-secondary-fixed": "#330031",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#280056",
+              "on-primary-container": "#ffffff",
+              "surface-container-highest": "#38323f",
+              "inverse-on-surface": "#0a0612",
+              "surface": "#0a0612",
+              "on-tertiary-container": "#000000",
+              "surface-dim": "#0a0612",
+              "on-secondary-fixed-variant": "#8b0081",
+              "surface-variant": "#191022",
+              "surface-container-high": "#221d29",
+              "primary-fixed-dim": "#d7baff",
+              "on-error-container": "#ffdad6",
+              "on-surface": "#f2f2f2",
+              "on-background": "#f2f2f2",
+              "inverse-surface": "#f2f2f2",
+              "tertiary-fixed-dim": "#70f5ff",
+              "surface-container-lowest": "#000000",
+              "on-primary-fixed-variant": "#6100bd",
+              "surface-tint": "#7f0df2",
+              "on-secondary-container": "#ffffff",
+              "secondary-container": "#ff00ea",
+              "error-container": "#93000a",
+              "tertiary": "#00f2ff",
+              "secondary": "#ff00ea",
+              "tertiary-container": "#00f2ff",
+              "outline": "#000000",
+              "primary-fixed": "#eddcff",
+              "inverse-primary": "#7f0df2"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Space Grotesk"],
+              "label": ["Space Grotesk"],
+              "manga": ["Permanent Marker", "cursive"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .manga-panel {
+            clip-path: polygon(2% 0%, 100% 0%, 98% 100%, 0% 100%);
+            border: 2px solid rgba(127, 13, 242, 0.3);
+        }
+        .manga-panel-alt {
+            clip-path: polygon(0% 5%, 95% 0%, 100% 95%, 5% 100%);
+            border: 2px solid rgba(255, 0, 234, 0.3);
+        }
+        .glitch-text {
+            text-shadow: 2px 0 #ff00ea, -2px 0 #00f2ff;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0a0612;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #7f0df2;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .quick-view-btn, .add-to-cart-btn {
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: all 0.2s;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .quick-view-btn { background: #00f2ff; color: #000; }
+        .add-to-cart-btn { background: #ff00ea; color: #fff; }
+        .group:hover .quick-view-btn, .group:hover .add-to-cart-btn {
+            opacity: 1;
+        }
+        .hidden-row {
+            display: none !important;
+        }
+        .font-manga { font-family: 'Permanent Marker', cursive; }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            background: rgba(10, 6, 18, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            border: 4px solid #7f0df2;
+            box-shadow: 0 0 30px #7f0df2;
+        }
+
+        /* Notifications */
+        .toast {
+            animation: slideIn 0.3s ease forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .payment-card {
+            border: 2px solid rgba(127, 13, 242, 0.2);
+            transition: all 0.3s ease;
+        }
+        .payment-card:hover {
+            border-color: #ff00ea;
+            box-shadow: 0 0 15px rgba(255, 0, 234, 0.3);
+        }
+        .payment-card.active {
+            border-color: #00f2ff;
+            background: rgba(0, 242, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-secondary selection:text-white custom-scrollbar">
+<!-- Global Scanlines Overlay -->
+<div class="fixed inset-0 scanlines opacity-30"></div>
+<!-- Quick View Modal -->
+<div class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4" id="quick-view-modal">
+<div class="absolute inset-0 modal-overlay" onclick="closeModal()"></div>
+<div class="relative z-10 w-full max-w-4xl modal-content bg-background p-2 group overflow-hidden">
+<button class="absolute top-4 right-4 z-20 text-white hover:text-secondary transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined text-4xl">close</span>
+</button>
+<div class="relative overflow-hidden">
+<img alt="Preview" class="w-full h-auto max-h-[80vh] object-contain" id="modal-img" src=""/>
+<div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
+<h2 class="text-4xl font-manga italic uppercase text-white glitch-text" id="modal-title">Title</h2>
+<p class="text-2xl font-manga text-tertiary italic mt-2" id="modal-price">$0.00</p>
+<div class="mt-4 flex gap-4">
+<button class="px-8 py-3 bg-secondary text-white font-manga italic hover:brightness-125 transition-all" id="modal-add-btn">ADD TO CART</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Checkout Modal -->
+<div class="fixed inset-0 z-[120] hidden flex items-center justify-center p-4" id="checkout-modal">
+<div class="absolute inset-0 modal-overlay" onclick="closeCheckout()"></div>
+<div class="relative z-10 w-full max-w-3xl modal-content bg-background p-8 overflow-y-auto max-h-[90vh] custom-scrollbar">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-5xl font-manga italic uppercase glitch-text">SECURE TERMINAL</h2>
+<button class="text-white hover:text-secondary" onclick="closeCheckout()">
+<span class="material-symbols-outlined text-4xl">close</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+<!-- Order Summary -->
+<div class="space-y-6">
+<h3 class="text-2xl font-manga italic text-cyan-400 border-b border-cyan-400/30 pb-2">ORDER_SUMMARY</h3>
+<div class="space-y-4 max-h-60 overflow-y-auto custom-scrollbar pr-4" id="checkout-items">
+<!-- Items populated via JS -->
+</div>
+<div class="pt-4 border-t border-fuchsia-500/30 space-y-2 font-manga italic">
+<div class="flex justify-between text-slate-400">
+<span>SUBTOTAL</span>
+<span id="checkout-subtotal">$0.00</span>
+</div>
+<div class="flex justify-between text-slate-400">
+<span>SHIPPING</span>
+<span>$5.00</span>
+</div>
+<div class="flex justify-between text-2xl text-fuchsia-500 pt-2">
+<span>TOTAL_DUE</span>
+<span id="checkout-total">$0.00</span>
+</div>
+</div>
+</div>
+<!-- Payment Methods -->
+<div class="space-y-6">
+<h3 class="text-2xl font-manga italic text-cyan-400 border-b border-cyan-400/30 pb-2">SELECT_METHOD</h3>
+<div class="space-y-4">
+<button class="payment-card w-full p-4 flex items-center gap-4 bg-slate-900/40 rounded-lg group" onclick="selectPayment(this, 'Venmo')">
+<div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-400">account_balance_wallet</span>
+</div>
+<div class="text-left">
+<p class="font-manga italic text-xl text-white">VENMO</p>
+<p class="text-xs text-slate-500 tracking-widest">@ASAC_COLLECTIVE</p>
+</div>
+</button>
+<button class="payment-card w-full p-4 flex items-center gap-4 bg-slate-900/40 rounded-lg group" onclick="selectPayment(this, 'PayPal')">
+<div class="w-12 h-12 bg-indigo-500/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-indigo-400">payments</span>
+</div>
+<div class="text-left">
+<p class="font-manga italic text-xl text-white">PAYPAL</p>
+<p class="text-xs text-slate-500 tracking-widest">PAYMENTS@ASAC.CLUB</p>
+</div>
+</button>
+<button class="payment-card w-full p-4 flex items-center gap-4 bg-slate-900/40 rounded-lg group" onclick="selectPayment(this, 'CashApp')">
+<div class="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-green-400">attach_money</span>
+</div>
+<div class="text-left">
+<p class="font-manga italic text-xl text-white">CASHAPP</p>
+<p class="text-xs text-slate-500 tracking-widest">$ASACCLUB</p>
+</div>
+</button>
+</div>
+<button class="w-full py-4 mt-6 bg-primary text-white font-manga italic text-2xl hover:brightness-125 transition-all shadow-[0_0_30px_rgba(127,13,242,0.6)] disabled:opacity-50 disabled:cursor-not-allowed" disabled="" id="final-checkout-btn" onclick="processOrder()">
+                    COMPLETE_TRANSACTION
+                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Drawer -->
+<div class="fixed right-0 top-0 h-full w-full md:w-96 bg-slate-950/95 border-l border-fuchsia-500/50 z-[110] transform translate-x-full transition-transform duration-300" id="cart-drawer">
+<div class="p-6 h-full flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-3xl font-manga italic text-fuchsia-400">YOUR CART</h2>
+<button class="text-slate-400 hover:text-white" onclick="toggleCart()">
+<span class="material-symbols-outlined text-3xl">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar" id="cart-items">
+<!-- Cart items populated here -->
+<p class="text-slate-500 font-manga italic text-center py-10 opacity-50">STILL EMPTY...</p>
+</div>
+<div class="pt-6 border-t border-fuchsia-500/30">
+<div class="flex justify-between mb-4 font-manga italic text-xl">
+<span>TOTAL</span>
+<span class="text-cyan-400" id="cart-total">$0.00</span>
+</div>
+<button class="w-full py-4 bg-primary text-white font-manga italic text-xl hover:brightness-110 shadow-[0_0_20px_rgba(127,13,242,0.4)]" onclick="openCheckout()">CHECKOUT</button>
+</div>
+</div>
+</div>
+<!-- Notifications Container -->
+<div class="fixed top-24 right-6 z-[120] flex flex-col gap-4" id="notifications"></div>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-slate-950/80 backdrop-blur-md border-b border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.3)]">
+<div class="flex items-center">
+<img alt="After School Anime Club Logo" class="h-12 w-auto animate-float cursor-pointer" src="https://lh3.googleusercontent.com/aida/ADBb0ujQaTncmu5fSIivsbrJ0bMJNv5IhKEgOKcSrQiu_OiL2hEZt8IIG5Yd6hK3uHvxaHRvzUXYt-VmUUNsBm8640b5R4cKjrjleIvF5k14L0ZnFTw21F3AqX-HJW1OiWaIv5ywDV32yZXd8LqhTUWPA8ilBA0k1VKEJAIB-fUa1cQh2I_2mLwG-GWlfnZyOLDaAdhLx3T3FORbNa2GhVeuzNaVjq13LeL4rtMI0RspXK0LKO5kqbR4_JOgmd0atNFx_sww7dDU16PMeD0"/>
+</div>
+<nav class="hidden md:flex items-center gap-8 font-manga tracking-tighter uppercase text-xl italic">
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Home</a>
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Gallery</a>
+<a class="text-cyan-400 border-b-2 border-cyan-400" href="#">Prints</a>
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Archive</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-fuchsia-500 dark:text-fuchsia-400 hover:bg-fuchsia-500/10 transition-all rounded-full" onclick="toggleCart()">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border border-background" id="cart-count">0</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full z-40 pt-20 flex flex-col bg-slate-950/90 border-r border-cyan-500/30 w-20 md:w-64 shadow-[5px_0_20px_rgba(34,211,238,0.1)]">
+<div class="flex-1 flex flex-col py-6" id="sidebar-filters"><button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1 border-l-4 border-transparent" data-filter="all"><span class="material-symbols-outlined text-xl">grid_view</span><span class="font-manga italic text-lg hidden md:block">View All</span></button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1 group" data-filter="new-drops">
+<span class="material-symbols-outlined text-xl">auto_awesome</span>
+<span class="font-manga italic text-lg hidden md:block">New Drops</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="best-sellers">
+<span class="material-symbols-outlined text-xl">local_fire_department</span>
+<span class="font-manga italic text-lg hidden md:block">Best Sellers</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="limited">
+<span class="material-symbols-outlined text-xl">stars</span>
+<span class="font-manga italic text-lg hidden md:block">Limited</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="classic">
+<span class="material-symbols-outlined text-xl">history_edu</span>
+<span class="font-manga italic text-lg hidden md:block">Classic</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="zines">
+<span class="material-symbols-outlined text-xl">menu_book</span>
+<span class="font-manga italic text-lg hidden md:block">Zines</span>
+</button>
+</div>
+<div class="p-6">
+<button class="w-full py-2 bg-secondary text-on-secondary font-manga text-sm italic tracking-widest hover:brightness-110 transition-all rounded shadow-[0_0_10px_rgba(255,0,234,0.5)] hidden md:block">
+            JOIN DISCORD
+        </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pl-20 md:pl-64 pt-20 min-h-screen relative overflow-hidden">
+<!-- Background Watermark -->
+<div class="fixed inset-0 pointer-events-none flex items-center justify-center z-0 opacity-5">
+<span class="font-manga text-[40vw] text-primary -rotate-12 select-none uppercase">ASAC</span>
+</div>
+<div class="relative z-10 px-8 py-12">
+<!-- Header Section -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-fuchsia-900/30 pb-8">
+<div>
+<h1 class="text-6xl md:text-8xl font-manga italic tracking-tighter uppercase glitch-text text-on-background">
+                    ART PRINTS
+                </h1>
+<p class="mt-4 text-cyan-400 font-manga italic tracking-widest text-lg uppercase flex items-center gap-2">
+<span class="w-12 h-px bg-cyan-400"></span> 
+                    Limited Edition 90s Style Releases
+                </p>
+</div>
+<div class="flex gap-4">
+<div class="relative group">
+<button class="px-6 py-3 border border-fuchsia-500/50 hover:bg-fuchsia-500/20 text-fuchsia-400 font-manga italic text-sm transition-all flex items-center gap-2 min-w-[140px]" id="filter-btn" onclick="event.stopPropagation(); document.querySelectorAll('.dropdown-menu').forEach(d =&gt; d !== this.nextElementSibling &amp;&amp; d.classList.add('hidden')); this.nextElementSibling.classList.toggle('hidden')">
+                        Filter: <span id="current-filter-label">ALL</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<div class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-fuchsia-500/30 hidden z-50 dropdown-menu"><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('all')">VIEW ALL</button><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('new-drops')">NEW DROPS</button><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('best-sellers')">BEST SELLERS</button><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('limited')">LIMITED</button><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('classic')">CLASSIC</button><button class="w-full text-left px-4 py-2 hover:bg-fuchsia-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applyFilter('zines')">ZINES</button></div>
+</div>
+<div class="relative group">
+<button class="px-6 py-3 border border-cyan-500/50 hover:bg-cyan-500/20 text-cyan-400 font-manga italic text-sm transition-all flex items-center gap-2 min-w-[140px]" id="sort-btn" onclick="event.stopPropagation(); document.querySelectorAll('.dropdown-menu').forEach(d =&gt; d !== this.nextElementSibling &amp;&amp; d.classList.add('hidden')); this.nextElementSibling.classList.toggle('hidden')">
+                        Sort: <span id="current-sort-label">LATEST</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<div class="absolute right-0 top-full mt-2 w-48 bg-slate-900 border border-cyan-500/30 hidden z-50 dropdown-menu">
+<button class="w-full text-left px-4 py-2 hover:bg-cyan-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applySort('latest')">LATEST</button>
+<button class="w-full text-left px-4 py-2 hover:bg-cyan-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applySort('price-low')">PRICE: LOW-HIGH</button>
+<button class="w-full text-left px-4 py-2 hover:bg-cyan-500/20 font-manga italic text-slate-300 hover:text-white" onclick="applySort('price-high')">PRICE: HIGH-LOW</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Manga Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[250px] md:auto-rows-[350px]" id="gallery-grid">
+<!-- Items injected via JS -->
+</div>
+<!-- Pagination/Footer Actions -->
+<div class="mt-20 flex flex-col items-center gap-8">
+<button class="px-12 py-5 bg-transparent border-2 border-fuchsia-500 text-fuchsia-500 font-manga italic text-xl tracking-widest hover:bg-fuchsia-500 hover:text-white transition-all transform hover:-rotate-1 active:scale-95 shadow-[0_0_20px_rgba(217,70,239,0.4)]" id="load-more">
+                Load More Archives
+            </button>
+<a class="flex items-center gap-2 text-slate-500 hover:text-cyan-400 font-manga italic text-sm tracking-[0.3em] transition-all" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+                Back to Terminal Home
+            </a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="pl-20 md:pl-64 w-full py-8 px-10 flex flex-col md:flex-row justify-between items-center opacity-60 hover:opacity-100 transition-opacity duration-500 bg-slate-950 border-t border-fuchsia-500/20 font-manga text-xs tracking-[0.2em] italic uppercase">
+<div class="text-purple-500">
+        ©199X AFTER SCHOOL ANIME CLUB - STAY NEON
+    </div>
+<div class="flex gap-8">
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Privacy</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Terms</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Shipping</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Contact</a>
+</div>
+</footer>
+<script>
+    // Data setup
+    const baseImg = "https://lh3.googleusercontent.com/aida-public/AB6AXuA6PmQq2I7HYe0J-5ns-BTKUlG2rlRb5yTF-N4Td-Svp1FBHG9dtwuieSMdFv4LJjPW4EvXjQw5_BXEqyOnrWSBjdasKlZ05MUpnmJUZ93Y9aCod4CV4p3COk9s3t9XCMQt_-Q88ShNYFksBPxr0NBHbDLwuHSGuO7NuLDWnicRmSq2GXvjFuouXF66uTZ2QzVpB1uvMdU28vSpCoancI6r_azht7yDKV_G8yrYo__GrbySYVu-tVnML3Td6D1BRoQSgZLaS7YIbaxO";
+    const altImg = "https://lh3.googleusercontent.com/aida-public/AB6AXuADjLKcnXt0-FIUCBY2ux6v5WGMPs7YwOcUeOm_7ZpWomeLYYGwwWZHbiE0i8Le4NncnetXaxFq4KItd_rxA9aTYz1_2-aPUBbvCK98M9KcI0Rweb5GRqor3pkR9R9oxFzberO5Nx7kCl4l_ofGEoj53OHhDgKEfGJCKPpTWRRL8jrb2MZMzZ-VVvo5lPOL2hQnTSRYzPnpFq4HJ7VlZMMmTnrisC1y6cZCzdIj9rOmwjjDz9Tx24mnnOvJfprs3oPeTHKfP746K-zB";
+    const specialImg = "https://lh3.googleusercontent.com/aida-public/AB6AXuDSr4dJ4c4Apt7uOFYgwNW3I3QkYr6R7u6i2EbQ6CMbiftSPKTARL4z1DOrfgeYM9cVhLf2vy6I0o-0tsxabf-3cQa9ug-QhYqPrFo8G5eyI6qOf_iUJSvPu2qnJ715TkWKJSmoXL14X_AVxvPh0WmjV9ssyCtz9rKGtmOxG9oe2DjBphVAmh4vsa7_lohrwBDkK3zkSQL_VHgFF9sHHLY76ltCA66GfqdUmTjMa7kp1JNPCzShp2McCZfrAvbycixgV43BnsfO9oyN";
+
+    const products = [
+        { id: 1, title: "Cyber Ghost '94", price: 45.00, tag: "new-drops", img: baseImg },
+        { id: 2, title: "Night Drive", price: 35.00, tag: "best-sellers", img: altImg, soldOut: true },
+        { id: 3, title: "Static Pulse", price: 32.00, tag: "limited", img: specialImg },
+        { id: 4, title: "Neon Tokyo", price: 40.00, tag: "classic", img: baseImg },
+        { id: 5, title: "Zine #01", price: 15.00, tag: "zines", img: baseImg },
+        { id: 6, title: "Retro Mech", price: 55.00, tag: "new-drops", img: baseImg },
+        { id: 7, title: "Midnight City", price: 30.00, tag: "best-sellers", img: altImg },
+        { id: 8, title: "Digital Rain", price: 38.00, tag: "limited", img: baseImg },
+        { id: 9, title: "Synth Soul", price: 42.00, tag: "classic", img: specialImg },
+        { id: 10, title: "Glitch Girl", price: 45.00, tag: "new-drops", img: baseImg }
+    ];
+
+    while(products.length < 24) {
+        const i = products.length + 1;
+        const tags = ["classic", "new-drops", "limited", "best-sellers", "zines"];
+        products.push({
+            id: i,
+            title: `Archival Print #${i}`,
+            price: 25.00 + (Math.random() * 50),
+            tag: tags[i % tags.length],
+            img: i % 3 === 0 ? specialImg : (i % 2 === 0 ? altImg : baseImg)
+        });
+    }
+
+    let cart = JSON.parse(localStorage.getItem('asac-cart') || '[]');
+    let currentFilter = 'all';
+    let currentSort = 'latest';
+    let visibleCount = 9;
+    let selectedPaymentMethod = null;
+
+    const grid = document.getElementById('gallery-grid');
+    const loadBtn = document.getElementById('load-more');
+
+    function renderGrid() {
+        grid.innerHTML = '';
+        let filtered = products.filter(p => currentFilter === 'all' || p.tag === currentFilter);
+        
+        if (currentSort === 'price-low') filtered.sort((a, b) => a.price - b.price);
+        else if (currentSort === 'price-high') filtered.sort((a, b) => b.price - a.price);
+        else if (currentSort === 'latest') filtered.sort((a, b) => b.id - a.id);
+
+        filtered.slice(0, visibleCount).forEach((p, idx) => {
+            const isLarge = idx === 0 && currentFilter === 'all';
+            const panel = document.createElement('div');
+            panel.className = `${isLarge ? 'md:col-span-8 md:row-span-2' : 'md:col-span-4'} group relative overflow-hidden ${idx % 2 === 0 ? 'manga-panel' : 'manga-panel-alt'} cursor-pointer bg-slate-900 h-full`;
+            
+            panel.innerHTML = `
+                <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70 group-hover:opacity-100" src="${p.img}" alt="${p.title}">
+                <div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60"></div>
+                <div class="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                    <button onclick="openQuickView(${p.id})" class="quick-view-btn">Quick View</button>
+                    ${!p.soldOut ? `<button onclick="addToCart(${p.id})" class="add-to-cart-btn">Add to Cart</button>` : ''}
+                </div>
+                ${p.soldOut ? '<div class="absolute top-6 right-6 z-10"><span class="bg-fuchsia-500 text-white px-2 py-1 font-manga text-xs italic">SOLD OUT</span></div>' : ''}
+                <div class="absolute bottom-6 left-6 transition-all group-hover:translate-x-2 z-10">
+                    <h3 class="${isLarge ? 'text-4xl' : 'text-xl'} font-manga text-white italic uppercase tracking-tighter">${p.title}</h3>
+                    <p class="text-secondary font-manga ${isLarge ? 'text-xl' : 'text-sm'} italic">$${p.price.toFixed(2)}</p>
+                </div>
+            `;
+            grid.appendChild(panel);
+        });
+
+        loadBtn.style.display = visibleCount >= filtered.length ? 'none' : 'flex';
+    }
+
+    // Modal Logic
+    function openQuickView(id) {
+        const p = products.find(x => x.id === id);
+        document.getElementById('modal-img').src = p.img;
+        document.getElementById('modal-title').textContent = p.title;
+        document.getElementById('modal-price').textContent = `$${p.price.toFixed(2)}`;
+        const addBtn = document.getElementById('modal-add-btn');
+        addBtn.onclick = () => { addToCart(id); closeModal(); };
+        addBtn.style.display = p.soldOut ? 'none' : 'block';
+        
+        document.getElementById('quick-view-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('quick-view-modal').classList.add('hidden');
+    }
+
+    // Cart Logic
+    function addToCart(id) {
+        const p = products.find(x => x.id === id);
+        cart.push({...p, cartId: Date.now()});
+        updateCart();
+        showNotification(`${p.title} added to cart!`);
+    }
+
+    function removeFromCart(cartId) {
+        cart = cart.filter(item => item.cartId !== cartId);
+        updateCart();
+    }
+
+    function updateCart() {
+        localStorage.setItem('asac-cart', JSON.stringify(cart));
+        const container = document.getElementById('cart-items');
+        const count = document.getElementById('cart-count');
+        const total = document.getElementById('cart-total');
+        
+        count.textContent = cart.length;
+        
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-slate-500 font-manga italic text-center py-10 opacity-50">STILL EMPTY...</p>';
+            total.textContent = '$0.00';
+            return;
+        }
+
+        let sum = 0;
+        container.innerHTML = cart.map(item => {
+            sum += item.price;
+            return `
+                <div class="flex gap-4 items-center bg-slate-900/50 p-3 border border-fuchsia-500/20">
+                    <img src="${item.img}" class="w-16 h-16 object-cover border border-cyan-500/30">
+                    <div class="flex-1">
+                        <h4 class="font-manga text-sm text-white italic">${item.title}</h4>
+                        <p class="text-cyan-400 font-manga text-xs">$${item.price.toFixed(2)}</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.cartId})" class="text-fuchsia-500 hover:text-white">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        total.textContent = `$${sum.toFixed(2)}`;
+    }
+
+    function toggleCart() {
+        const drawer = document.getElementById('cart-drawer');
+        drawer.classList.toggle('translate-x-full');
+    }
+
+    // Checkout Logic
+    function openCheckout() {
+        if (cart.length === 0) {
+            showNotification("Cart is empty!");
+            return;
+        }
+        
+        const container = document.getElementById('checkout-items');
+        const subtotalEl = document.getElementById('checkout-subtotal');
+        const totalEl = document.getElementById('checkout-total');
+        
+        let sum = 0;
+        container.innerHTML = cart.map(item => {
+            sum += item.price;
+            return `
+                <div class="flex justify-between items-center text-sm font-manga italic">
+                    <span class="text-slate-300">${item.title}</span>
+                    <span class="text-cyan-400">$${item.price.toFixed(2)}</span>
+                </div>
+            `;
+        }).join('');
+
+        subtotalEl.textContent = `$${sum.toFixed(2)}`;
+        totalEl.textContent = `$${(sum + 5).toFixed(2)}`;
+
+        document.getElementById('checkout-modal').classList.remove('hidden');
+        toggleCart();
+    }
+
+    function closeCheckout() {
+        document.getElementById('checkout-modal').classList.add('hidden');
+    }
+
+    function selectPayment(el, method) {
+        document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('active'));
+        el.classList.add('active');
+        selectedPaymentMethod = method;
+        document.getElementById('final-checkout-btn').disabled = false;
+    }
+
+    function processOrder() {
+        const btn = document.getElementById('final-checkout-btn');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = "INITIALIZING...";
+        
+        setTimeout(() => {
+            btn.textContent = "VERIFYING_PAYMENT...";
+            setTimeout(() => {
+                alert(`Order Confirmed! Transfer request sent via ${selectedPaymentMethod}. Check your app for confirmation.`);
+                cart = [];
+                updateCart();
+                closeCheckout();
+                btn.textContent = originalText;
+                btn.disabled = true;
+                selectedPaymentMethod = null;
+                document.querySelectorAll('.payment-card').forEach(card => card.classList.remove('active'));
+            }, 2000);
+        }, 1500);
+    }
+
+    function showNotification(msg) {
+        const container = document.getElementById('notifications');
+        const toast = document.createElement('div');
+        toast.className = 'toast bg-cyan-400 text-black px-6 py-3 font-manga italic text-sm shadow-[0_0_15px_rgba(0,242,255,0.4)] border-l-4 border-white';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Filtering & Sorting UI
+    function applyFilter(tag) {
+        currentFilter = tag;
+        visibleCount = 9;
+        document.getElementById('current-filter-label').textContent = tag.toUpperCase().replace('-', ' ');
+        
+        // Update sidebar visual active state
+        document.querySelectorAll('.sidebar-btn').forEach(btn => {
+            if (btn.dataset.filter === tag) {
+                btn.classList.add('bg-gradient-to-r', 'from-fuchsia-900/40', 'to-transparent', 'text-fuchsia-400', 'border-l-4', 'border-fuchsia-500', 'brightness-125');
+                btn.classList.remove('text-slate-400');
+            } else {
+                btn.classList.remove('bg-gradient-to-r', 'from-fuchsia-900/40', 'to-transparent', 'text-fuchsia-400', 'border-l-4', 'border-fuchsia-500', 'brightness-125');
+                btn.classList.add('text-slate-400');
+            }
+        });
+
+        renderGrid();
+    }
+
+    function applySort(type) {
+        currentSort = type;
+        document.getElementById('current-sort-label').textContent = type.replace('-', ' ').toUpperCase();
+        renderGrid();
+    }
+
+    // Sidebar button events
+    document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.onclick = () => applyFilter(btn.dataset.filter);
+    });
+
+    loadBtn.addEventListener('click', () => {
+        visibleCount += 6;
+        renderGrid();
+    });
+
+    // Glitch Engine
+    setInterval(() => {
+        if (Math.random() > 0.95) {
+            const glitchers = document.querySelectorAll('.glitch-text');
+            glitchers.forEach(el => {
+                el.style.transform = `translate(${Math.random() * 4 - 2}px, 0)`;
+                setTimeout(() => el.style.transform = 'none', 50);
+            });
+        }
+    }, 100);
+
+    // Initial load
+    updateCart();
+    renderGrid();
+</script>
+<script>window.addEventListener('click', () => document.querySelectorAll('.dropdown-menu').forEach(d => d.classList.add('hidden'))); const originalRenderGrid = renderGrid; renderGrid = function() { originalRenderGrid(); const filtered = products.filter(p => currentFilter === 'all' || p.tag === currentFilter); if (visibleCount >= filtered.length) { loadBtn.textContent = 'NO MORE ARCHIVES'; loadBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none'); loadBtn.style.display = 'flex'; } else { loadBtn.textContent = 'Load More Archives'; loadBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none'); } }; renderGrid(); document.querySelectorAll('.sidebar-btn').forEach(btn => { const oldClick = btn.onclick; btn.onclick = (e) => { applyFilter(btn.dataset.filter); if(oldClick) oldClick(e); }; });</script></body></html>
