@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ARCHIVE | MIDNIGHT GLITCH</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#f2f2f2",
+              "on-secondary-fixed": "#330031",
+              "surface": "#0a0612",
+              "outline-variant": "#7f0df2",
+              "tertiary-fixed": "#caffff",
+              "on-tertiary": "#000000",
+              "on-background": "#f2f2f2",
+              "on-primary-container": "#ffffff",
+              "background": "#0a0612",
+              "on-secondary-fixed-variant": "#8b0081",
+              "tertiary": "#00f2ff",
+              "inverse-primary": "#7f0df2",
+              "error-container": "#93000a",
+              "on-surface": "#f2f2f2",
+              "on-tertiary-fixed": "#002022",
+              "on-error": "#690005",
+              "outline": "#000000",
+              "surface-container": "#191022",
+              "on-primary-fixed": "#280056",
+              "tertiary-dim": "#f27691",
+              "primary-dim": "#9543ff",
+              "secondary-fixed": "#ffdcff",
+              "on-surface-variant": "#cec2d9",
+              "error": "#ffb4ab",
+              "surface-container-highest": "#38323f",
+              "primary": "#7f0df2",
+              "on-tertiary-fixed-variant": "#004f54",
+              "inverse-on-surface": "#0a0612",
+              "on-secondary": "#ffffff",
+              "primary-fixed-dim": "#d7baff",
+              "tertiary-container": "#00f2ff",
+              "secondary-dim": "#c989f0",
+              "tertiary-fixed-dim": "#70f5ff",
+              "on-primary-fixed-variant": "#6100bd",
+              "on-primary": "#ffffff",
+              "secondary-container": "#ff00ea",
+              "surface-container-low": "#0a0612",
+              "secondary": "#ff00ea",
+              "on-tertiary-container": "#000000",
+              "surface-container-high": "#221d29",
+              "surface-container-lowest": "#000000",
+              "surface-tint": "#7f0df2",
+              "surface-variant": "#191022",
+              "on-secondary-container": "#ffffff",
+              "secondary-fixed-dim": "#ffafff",
+              "surface-bright": "#191022",
+              "surface-dim": "#0a0612",
+              "on-error-container": "#ffdad6",
+              "error-dim": "#d73357",
+              "primary-fixed": "#eddcff",
+              "primary-container": "#7f0df2"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Space Grotesk"],
+              "label": ["Space Grotesk"],
+              "manga": ["Permanent Marker", "cursive"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanlines {
+            background: linear-gradient(
+                to bottom,
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .manga-panel {
+            clip-path: polygon(2% 0%, 100% 0%, 98% 100%, 0% 100%);
+        }
+        .manga-panel-alt {
+            clip-path: polygon(0% 5%, 95% 0%, 100% 95%, 5% 100%);
+        }
+        .glitch-text {
+            text-shadow: 2px 0 #ff00ea, -2px 0 #00f2ff;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        .sold-out-stamp {
+            transform: rotate(-12deg) scale(1.1);
+            background: rgba(0, 0, 0, 0.85);
+            border: 4px solid #ff00ea;
+            color: #ff00ea;
+            box-shadow: 0 0 15px rgba(255, 0, 234, 0.5), inset 0 0 10px rgba(255, 0, 234, 0.3);
+            text-shadow: 2px 2px 0px #000;
+        }
+        .sold-out-stamp::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 0, 234, 0.1) 2px, rgba(255, 0, 234, 0.1) 4px);
+            pointer-events: none;
+        }
+        .request-btn {
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        .modal-overlay {
+            background: rgba(10, 6, 18, 0.95);
+            backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            border: 4px solid #7f0df2;
+            box-shadow: 0 0 30px #7f0df2;
+        }
+        .toast {
+            animation: slideIn 0.3s ease forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0a0612;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #7f0df2;
+        }
+        .archive-item {
+            display: none;
+        }
+        .archive-item.visible {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-secondary selection:text-white overflow-x-hidden custom-scrollbar">
+<!-- Global Scanlines Overlay -->
+<div class="fixed inset-0 scanlines opacity-30 pointer-events-none z-[100]"></div>
+<!-- Quick View Modal -->
+<div class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4" id="quick-view-modal">
+<div class="absolute inset-0 modal-overlay" onclick="closeModal()"></div>
+<div class="relative z-10 w-full max-w-2xl modal-content bg-background p-2 group overflow-hidden">
+<button class="absolute top-4 right-4 z-20 text-white hover:text-secondary transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined text-4xl">close</span>
+</button>
+<div class="relative overflow-hidden flex flex-col items-center">
+<img alt="Preview" class="w-full h-auto max-h-[70vh] object-contain grayscale" id="modal-img" src=""/>
+<div class="w-full p-8 bg-background border-t border-primary/30">
+<h2 class="text-4xl font-manga italic uppercase text-white glitch-text" id="modal-title">Title</h2>
+<p class="text-cyan-400 font-manga italic mt-2 uppercase tracking-widest" id="modal-meta">Archived release</p>
+<div class="mt-6">
+<button class="w-full px-8 py-3 bg-secondary text-white font-manga italic hover:brightness-125 transition-all shadow-[0_0_15px_rgba(255,0,234,0.4)]" id="modal-request-btn">REQUEST RE-RELEASE</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Drawer -->
+<div class="fixed right-0 top-0 h-full w-full md:w-96 bg-slate-950/95 border-l border-fuchsia-500/50 z-[110] transform translate-x-full transition-transform duration-300" id="cart-drawer">
+<div class="p-6 h-full flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-3xl font-manga italic text-fuchsia-400">YOUR CART</h2>
+<button class="text-slate-400 hover:text-white" onclick="toggleCart()">
+<span class="material-symbols-outlined text-3xl">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar" id="cart-items">
+<p class="text-slate-500 font-manga italic text-center py-10 opacity-50">STILL EMPTY...</p>
+</div>
+<div class="pt-6 border-t border-fuchsia-500/30">
+<div class="flex justify-between mb-4 font-manga italic text-xl">
+<span>TOTAL</span>
+<span class="text-cyan-400" id="cart-total">$0.00</span>
+</div>
+<button class="w-full py-4 bg-primary text-white font-manga italic text-xl hover:brightness-110 shadow-[0_0_20px_rgba(127,13,242,0.4)]" onclick="showNotification('Checkout system offline for archives.')">CHECKOUT</button>
+</div>
+</div>
+</div>
+<!-- Notifications Container -->
+<div class="fixed top-24 right-6 z-[120] flex flex-col gap-4" id="notifications"></div>
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-2 bg-slate-950/80 backdrop-blur-md border-b border-fuchsia-500/30 shadow-[0_0_15px_rgba(217,70,239,0.3)]">
+<div class="flex items-center">
+<img alt="After School Anime Club Logo" class="h-12 w-auto animate-float cursor-pointer" src="https://lh3.googleusercontent.com/aida/ADBb0ujOBDtF-4zb7fiyZ0Wl1KZRKtX1Q78Gynkre3u2DuHgCDvlWD5RUUK5MO1jcE9kV2i-mqh8SGKmK7MV8fiKQPBFM9zpX58rXs2j71T77rx5ef_mJl4NJgssM8loOjM8hUsdG63s0QfqhXIqg6YGJcdhr1Y1SFPvXYkxERrtZ714MOb1_6wD3aSnwsocawRVSPfu7U0KfFIYbzElqQdSfa5-g8HjdDiYnw0FY_aNj7kbNDh3DtAPcuaeMiUqlOgLeetXwcIEaFp7Nas"/>
+</div>
+<nav class="hidden md:flex items-center gap-8 font-manga tracking-tighter uppercase text-xl italic">
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Home</a>
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Gallery</a>
+<a class="text-fuchsia-200/70 hover:text-fuchsia-400 transition-colors" href="#">Prints</a>
+<a class="text-cyan-400 border-b-2 border-cyan-400" href="#">Archive</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-fuchsia-500 dark:text-fuchsia-400 hover:bg-fuchsia-500/10 transition-all rounded-full" onclick="toggleCart()">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full border border-background" id="cart-count">0</span>
+</button>
+</div>
+</header>
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-full z-40 pt-20 flex flex-col bg-slate-950/90 border-r border-cyan-500/30 w-20 md:w-64 shadow-[5px_0_20px_rgba(34,211,238,0.1)]">
+<div class="flex-1 flex flex-col py-6" id="sidebar-filters">
+<button class="sidebar-btn flex items-center gap-4 px-6 py-4 transition-all hover:translate-x-1 border-l-4 bg-gradient-to-r from-fuchsia-900/40 to-transparent text-fuchsia-400 border-fuchsia-500 brightness-125" data-filter="all">
+<span class="material-symbols-outlined text-xl">grid_view</span>
+<span class="font-manga italic text-lg hidden md:block">View All</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1 group" data-filter="new">
+<span class="material-symbols-outlined text-xl">auto_awesome</span>
+<span class="font-manga italic text-lg hidden md:block">New Drops</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="best">
+<span class="material-symbols-outlined text-xl">local_fire_department</span>
+<span class="font-manga italic text-lg hidden md:block">Best Sellers</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="limited">
+<span class="material-symbols-outlined text-xl">stars</span>
+<span class="font-manga italic text-lg hidden md:block">Limited</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="classic">
+<span class="material-symbols-outlined text-xl">history_edu</span>
+<span class="font-manga italic text-lg hidden md:block">Classic</span>
+</button>
+<button class="sidebar-btn flex items-center gap-4 text-slate-400 hover:text-cyan-300 px-6 py-4 transition-all hover:translate-x-1" data-filter="zines">
+<span class="material-symbols-outlined text-xl">menu_book</span>
+<span class="font-manga italic text-lg hidden md:block">Zines</span>
+</button>
+</div>
+<div class="p-6">
+<button class="w-full py-2 bg-secondary text-on-secondary font-manga text-sm italic tracking-widest hover:brightness-110 transition-all rounded shadow-[0_0_10px_rgba(255,0,234,0.5)] hidden md:block">
+            JOIN DISCORD
+        </button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pl-20 md:pl-64 pt-24 pb-20 min-h-screen relative overflow-hidden">
+<!-- Background Watermark -->
+<div class="fixed inset-0 pointer-events-none flex items-center justify-center z-0 opacity-5">
+<span class="font-manga text-[40vw] text-primary -rotate-12 select-none uppercase">ARCHIVE</span>
+</div>
+<div class="relative z-10 px-8 py-12">
+<!-- Header Section -->
+<header class="mb-16 relative">
+<h1 class="text-6xl md:text-8xl font-manga italic tracking-tighter uppercase glitch-text text-on-background">Archive</h1>
+<p class="mt-4 text-cyan-400 font-manga italic tracking-widest text-lg uppercase flex items-center gap-2">
+<span class="w-12 h-px bg-cyan-400"></span> 
+                Historical Inventory &amp; Vault
+            </p>
+<div class="h-1 w-32 bg-secondary mt-8"></div>
+</header>
+<!-- Gallery Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10" id="archive-grid">
+<!-- Items injected by JS -->
+</div>
+<!-- Load More Section -->
+<div class="mt-20 flex flex-col items-center gap-8">
+<button class="px-12 py-5 bg-transparent border-2 border-fuchsia-500 text-fuchsia-500 font-manga italic text-xl tracking-widest hover:bg-fuchsia-500 hover:text-white transition-all transform hover:-rotate-1 active:scale-95 shadow-[0_0_20px_rgba(217,70,239,0.4)]" id="load-more-btn">
+                LOAD MORE ARCHIVES
+            </button>
+<a class="flex items-center gap-2 text-slate-500 hover:text-cyan-400 font-manga italic text-sm tracking-[0.3em] transition-all" href="#">
+<span class="material-symbols-outlined">arrow_back</span>
+                Back to Terminal Home
+            </a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="pl-20 md:pl-64 w-full py-8 px-10 flex flex-col md:flex-row justify-between items-center opacity-60 hover:opacity-100 transition-opacity duration-500 bg-slate-950 border-t border-fuchsia-500/20 font-manga text-xs tracking-[0.2em] italic uppercase">
+<div class="text-purple-500">
+        ©198X AFTER SCHOOL ANIME CLUB - Analog Heart // Digital Soul
+    </div>
+<div class="flex gap-8">
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Privacy</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Terms</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Shipping</a>
+<a class="text-slate-600 hover:text-fuchsia-400 transition-all" href="#">Contact</a>
+</div>
+</footer>
+<!-- CRT Overlay Effect -->
+<div class="fixed inset-0 pointer-events-none z-[120] bg-white opacity-[0.01] mix-blend-overlay"></div>
+<script>
+    // Data setup for 20 Archive items
+    const archiveData = [
+        { id: 1, title: "Ghost In The Grid 01", meta: "Released: Winter 1997", category: "classic", code: "#8801", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBWdbMY6nsebUAmy7mYJd4fn168UnLBKQQps2g8WFzw8-0DVS_s2BsqgWOaSyJCuTZNb_OW0R-BU7LMUlsAeV-8F8fmt878Db0egIEuJfAHajLAA-zwdypuMs-DeJjCKSV-dgkUHbk3-gVzf0Q70jiIoiBkHS8BiEeLI8HtgCVy-e3aOVYLnQlx6Zv4OXt-6Ej21RMTQcjLo8rGdcCLxSEi3iMIOFCYGMsFcnvO6vHrym3q_D5a6wxtm5gYCV5HQDwIUGhp9FCBnsAI" },
+        { id: 2, title: "Neo Tokyo Alley", meta: "Released: Spring 1998", category: "best", code: "#9021", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC7X76nz1oYZrDfqwT2TYYqdwKmvn05J3u1LCJh3SdQOXIYVnu6X_un6Ls3SBCFe5DWcqW9LyE9vw0K57fDgKLuyP6fg3Vkm2XyCrBZcCiZV1nYIRjhoBDaOuuVfFb8w3_o4GI2DUtyT8l6YRCXvpHelfxEN1GAMwcmhjs0D5Vs12kr4_Li5g0NX4216ooyPF9ZkIhJjrkWd2JOGD6pC0SG8WmADRuxDgleCttKINNBRRbhbm_jcAbH76w4isQ8H6-wXEQl43TqQQ32" },
+        { id: 3, title: "Terminal Pulse", meta: "Released: Autumn 1999", category: "limited", code: "#4402", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCifkDvijhOfy1FxWoQ8ZzUGoIF6n4zb7iSqgeABkk4OrzBY6ZUSfWQvIHJFkrmXgNitUqAl7_syAJUGMhHt0owWHO5hlzLmB4twfb0DzEIQFgC4naJ9VvV5_EuyQLYcnrcbMnK2KK8qOUo_ZAnka4X50bomLc9j7Z-mnTSW3skLxbJjBFjMIbuwXpclgL3KDM337YLu1u3gWupr0NHHngGC7q-MUVS1Rj0Om7w2zXiOWheKDhUX2rtDqnNADPBzZHdAmH5u3rKEmSC" },
+        { id: 4, title: "Night Walkers", meta: "Released: Summer 2000", category: "new", code: "#1024", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDByR4e3X5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 5, title: "Memory Fragment", meta: "Released: Winter 2001", category: "zines", code: "#0056", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC_5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 6, title: "Cyber-Dose Vol 1", meta: "Released: Spring 1995", category: "classic", code: "#0195", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuAYR4e3X5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 7, title: "Neon Signal", meta: "Released: Winter 2023", category: "new", code: "#2023", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuBR4e3X5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 8, title: "Protocol X", meta: "Released: Autumn 2002", category: "limited", code: "#8822", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC1R4e3X5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 9, title: "Static Dreams", meta: "Released: Spring 1996", category: "best", code: "#1196", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDX5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 10, title: "Void Walker", meta: "Released: Summer 2010", category: "zines", code: "#1010", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuE-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 11, title: "Electric Rain", meta: "Released: Winter 1994", category: "classic", code: "#0994", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuF-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 12, title: "Synapse Burn", meta: "Released: Summer 2015", category: "best", code: "#1551", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuG-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 13, title: "Hardwired Love", meta: "Released: Autumn 1998", category: "limited", code: "#9898", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuH-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 14, title: "District 09", meta: "Released: Spring 2005", category: "zines", code: "#0509", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuI-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 15, title: "Zenith Core", meta: "Released: Summer 2024", category: "new", code: "#2401", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuJ-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 16, title: "Satellite Soul", meta: "Released: Autumn 2001", category: "limited", code: "#1101", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuK-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 17, title: "Glitch Garden", meta: "Released: Winter 2008", category: "best", code: "#0808", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuL-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 18, title: "Binary Echo", meta: "Released: Spring 1993", category: "classic", code: "#9393", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuM-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 19, title: "Signal Lost", meta: "Released: Summer 2009", category: "zines", code: "#0911", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuN-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" },
+        { id: 20, title: "Phantom Thread", meta: "Released: Spring 2022", category: "new", code: "#2222", img: "https://lh3.googleusercontent.com/aida-public/AB6AXuO-5-nB0s2X6P8B6Nf4hX-W9Wv_i1l6E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X-E2V6V8G7D6S6v7z3B8wG-W0X" }
+    ];
+
+    let itemsPerPage = 6;
+    let visibleCount = itemsPerPage;
+    let currentFilter = 'all';
+    let cart = JSON.parse(localStorage.getItem('asac-cart') || '[]');
+
+    function renderGrid() {
+        const grid = document.getElementById('archive-grid');
+        const filteredData = currentFilter === 'all' 
+            ? archiveData 
+            : archiveData.filter(item => item.category === currentFilter);
+        
+        grid.innerHTML = filteredData.map((item, index) => {
+            const isVisible = index < visibleCount ? 'visible' : '';
+            const panelClass = index % 2 === 0 ? 'manga-panel' : 'manga-panel-alt';
+            return `
+                <div class="archive-item ${isVisible} group relative bg-surface-container/50 border border-primary/20 ${panelClass} overflow-hidden transition-all hover:border-tertiary/50" data-id="${item.id}">
+                    <div class="aspect-[4/5] relative overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-500">
+                        <img alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" src="${item.img}"/>
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <div class="sold-out-stamp relative px-8 py-3 text-3xl font-manga italic uppercase tracking-tighter">Sold Out</div>
+                        </div>
+                        <div class="absolute inset-0 flex flex-col items-center justify-end p-8 gap-4 translate-y-20 group-hover:translate-y-0 transition-all duration-300">
+                            <button class="w-full request-btn bg-tertiary text-on-tertiary px-4 py-3 text-sm font-manga italic hover:scale-105" onclick="requestRelease(this, '${item.title}')">REQUEST RE-RELEASE</button>
+                            <button class="w-full request-btn bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 text-xs font-manga italic hover:bg-white/20" onclick="openQuickView(${item.id})">QUICK VIEW</button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-manga italic text-2xl uppercase tracking-tighter text-white">${item.title}</h3>
+                            <span class="text-[10px] font-headline border border-fuchsia-500/30 px-2 py-0.5 text-fuchsia-400 uppercase">${item.code}</span>
+                        </div>
+                        <p class="text-[10px] text-white/40 font-headline uppercase tracking-widest">${item.meta}</p>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (visibleCount >= filteredData.length) {
+            loadMoreBtn.innerText = 'END OF VAULT';
+            loadMoreBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            loadMoreBtn.disabled = true;
+        } else {
+            loadMoreBtn.innerText = 'LOAD MORE ARCHIVES';
+            loadMoreBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            loadMoreBtn.disabled = false;
+        }
+    }
+
+    // Global Functions
+    function toggleCart() {
+        const drawer = document.getElementById('cart-drawer');
+        drawer.classList.toggle('translate-x-full');
+    }
+
+    function updateCart() {
+        localStorage.setItem('asac-cart', JSON.stringify(cart));
+        const count = document.getElementById('cart-count');
+        const container = document.getElementById('cart-items');
+        const total = document.getElementById('cart-total');
+        
+        count.textContent = cart.length;
+        
+        if (cart.length === 0) {
+            container.innerHTML = '<p class="text-slate-500 font-manga italic text-center py-10 opacity-50">STILL EMPTY...</p>';
+            total.textContent = '$0.00';
+            return;
+        }
+
+        let sum = 0;
+        container.innerHTML = cart.map(item => {
+            const price = item.price || 0;
+            sum += price;
+            return `
+                <div class="flex gap-4 items-center bg-slate-900/50 p-3 border border-fuchsia-500/20">
+                    <img src="${item.img}" class="w-16 h-16 object-cover border border-cyan-500/30">
+                    <div class="flex-1">
+                        <h4 class="font-manga text-sm text-white italic">${item.title}</h4>
+                        <p class="text-cyan-400 font-manga text-xs">$${price.toFixed(2)}</p>
+                    </div>
+                    <button onclick="removeFromCart(${item.cartId})" class="text-fuchsia-500 hover:text-white">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+        total.textContent = `$${sum.toFixed(2)}`;
+    }
+
+    function removeFromCart(cartId) {
+        cart = cart.filter(item => item.cartId !== cartId);
+        updateCart();
+    }
+
+    function showNotification(msg) {
+        const container = document.getElementById('notifications');
+        const toast = document.createElement('div');
+        toast.className = 'toast bg-cyan-400 text-black px-6 py-3 font-manga italic text-sm shadow-[0_0_15px_rgba(0,242,255,0.4)] border-l-4 border-white';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Modal Functions
+    function openQuickView(id) {
+        const p = archiveData.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('modal-img').src = p.img;
+        document.getElementById('modal-title').textContent = p.title;
+        document.getElementById('modal-meta').textContent = p.meta;
+        const requestBtn = document.getElementById('modal-request-btn');
+        requestBtn.innerText = 'REQUEST RE-RELEASE';
+        requestBtn.classList.remove('opacity-50', 'pointer-events-none');
+        requestBtn.onclick = () => {
+            requestRelease(requestBtn, p.title);
+        };
+        document.getElementById('quick-view-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('quick-view-modal').classList.add('hidden');
+    }
+
+    function requestRelease(btn, title) {
+        showNotification(`REQUEST SENT: ${title}`);
+        btn.innerText = 'REQUEST SENT';
+        btn.classList.add('opacity-50', 'pointer-events-none');
+    }
+
+    // Glitch Engine
+    setInterval(() => {
+        if (Math.random() > 0.95) {
+            const glitchers = document.querySelectorAll('.glitch-text');
+            glitchers.forEach(el => {
+                const x = Math.random() * 4 - 2;
+                el.style.transform = `translate(${x}px, 0)`;
+                setTimeout(() => el.style.transform = 'none', 50);
+            });
+        }
+    }, 100);
+
+    // Sidebar Active State
+    document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-btn').forEach(b => {
+                b.classList.remove('bg-gradient-to-r', 'from-fuchsia-900/40', 'to-transparent', 'text-fuchsia-400', 'border-fuchsia-500', 'brightness-125', 'border-l-4');
+                b.classList.add('text-slate-400');
+            });
+            this.classList.add('bg-gradient-to-r', 'from-fuchsia-900/40', 'to-transparent', 'text-fuchsia-400', 'border-fuchsia-500', 'brightness-125', 'border-l-4');
+            this.classList.remove('text-slate-400');
+            
+            currentFilter = this.getAttribute('data-filter');
+            visibleCount = itemsPerPage;
+            renderGrid();
+        });
+    });
+
+    // Load More Action
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    loadMoreBtn.addEventListener('click', function() {
+        visibleCount += itemsPerPage;
+        renderGrid();
+    });
+
+    // Initial Load
+    updateCart();
+    renderGrid();
+</script>
+</body></html>
